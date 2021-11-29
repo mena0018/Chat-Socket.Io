@@ -35,34 +35,14 @@ http.listen(8080);
 
 // Binds a socket server to the current HTTP server
 let socketServer = require('socket.io')(http);
+let registeredSockets = {};
+
 // Registers an event listener ('connection' event)
 socketServer.on('connection', function (socket) {
   console.log('A new user is connected...');
 
-/*
-   * Registers an event listener
-   *
-   * - The first parameter is the event name
-   * - The second parameter is a callback function that processes
-   *   the message content.
-   */
-  /*
-  socket.on('hello', (content) => {
-    console.log(content + ' says hello!');
-
-    // Pushes an event to all the connected clients
-    socketServer.emit('notification', content + ' says hello!');
-
-    // Pushes an event to the client related to the socket object
-    socket.emit('hello', 'Hi ' + content + ', wassup mate?');
-  });
-  */
-
-  let registeredSockets = {};
 
   function isAvailable (nickname) {
-
-    // if (Object.keys(registeredSockets).includes(nickname))
     if (registeredSockets[nickname] === undefined) {
       return true;
     }
@@ -70,9 +50,22 @@ socketServer.on('connection', function (socket) {
   }
 
     socket.on('>signin', (content) => {
-      if (isAvailable(content)){
-        console.log('login :' + content);
-        Object.keys(registeredSockets).push(content);
+      if (isAvailable(content)) {
+
+         // Ajout du socket à l'objet registeredSockets
+        registeredSockets[content] = socket;
+
+        // Envoie d'un événement de type <connected au client
+        socket.emit('<connected', content);
+
+        // Envoie d'un événement de type <notification à tous les autres
+        socket.broadcast.emit('<notification', content + ' à rejoint la conversation')
       } 
     });
 });
+
+
+
+
+
+
