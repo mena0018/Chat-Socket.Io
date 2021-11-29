@@ -16,6 +16,8 @@ let sendForm   = document.forms["send"];
 let span       = document.querySelector("span");
 let nickname   = document.querySelector("input[name='nickname']");
 let display    = document.getElementById("display");
+let error       = document.querySelector("toast");
+
 
 
 /*
@@ -40,6 +42,12 @@ socketClient.on('<notification', (content) => {
   // Ajoute le message passé en paramètre dans l'élément div#display
   display.innerHTML += content;
 });
+
+socketClient.on('<error', (content) => {
+  error.classList.remove("hidden");
+  error.innerHTML += 'Le pseudo' + content + 'est déjà utilisé';
+});
+
 
 signinForm.addEventListener("submit", (event) => {
     event.preventDefault();

@@ -59,9 +59,10 @@ socketServer.on('connection', function (socket) {
         socket.emit('<connected', content);
 
         // Envoie d'un événement de type <notification à tous les autres
-        socket.broadcast.emit('<notification', content + ' à rejoint la conversation')
+        socket.broadcast.emit('<notification', content + ' à rejoint la conversation <br>')
       } 
     });
+      socket.emit('<error', content);
 });
 
 
