@@ -41,7 +41,9 @@ let registeredSockets = {};
 socketServer.on('connection', function (socket) {
   console.log('A new user is connected...');
 
-
+  /**
+   * Retourne un booléen indiquant si le pseudo est disponible ou pas.
+   */
   function isAvailable (nickname) {
     if (registeredSockets[nickname] === undefined) {
       return true;
@@ -49,20 +51,43 @@ socketServer.on('connection', function (socket) {
     return false;
   }
 
+  /**
+   * Retourne le pseudo de l'utilisateur correspondant à l'objet socket passé en paramètre.
+   */
+  function getNicknameBy(socket) {
+    for (let key in registeredSockets) {
+      if (key == nickname){
+        return key;
+      }
+    }
+  }
+
+  
+  /**
+   * Ecouteur d'évenement <signin pour l'objet socket afin de : 
+   *  - Ajouter le socket à l'objet registeredSockets.
+   *  - Envoyer un événement de type <connected au client.
+   *  - Envoyer un événement de type <notification à tous les autres.
+   *  - Afficher un événement de type <error en cas d'utilisation d'un pseudo non dispo.
+   */
     socket.on('>signin', (content) => {
       if (isAvailable(content)) {
 
-         // Ajout du socket à l'objet registeredSockets
         registeredSockets[content] = socket;
-
-        // Envoie d'un événement de type <connected au client
         socket.emit('<connected', content);
-
-        // Envoie d'un événement de type <notification à tous les autres
         socket.broadcast.emit('<notification', content + ' à rejoint la conversation <br>')
       } 
       else {
         socket.emit('<error', content);
       }
     });
+
+
+    /**
+     * Ecouteur d'évenement <message pour l'objet socket afin de : 
+     * - Envoyer un événement de type <message à tous les clients connectés
+     */
+    socket.on('>message', (content) => {
+      socketServer.emit('>message', content);
+    })
 });
