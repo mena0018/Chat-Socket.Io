@@ -31,7 +31,7 @@ express.get('/client.js', (request, response) => {
 });
 
 // Server listens on port 8080
-http.listen(8080);
+http.listen(8000);
 
 // Binds a socket server to the current HTTP server
 let socketServer = require('socket.io')(http);
@@ -61,12 +61,8 @@ socketServer.on('connection', function (socket) {
         // Envoie d'un événement de type <notification à tous les autres
         socket.broadcast.emit('<notification', content + ' à rejoint la conversation <br>')
       } 
+      else {
+        socket.emit('<error', content);
+      }
     });
-      socket.emit('<error', content);
 });
-
-
-
-
-
-
