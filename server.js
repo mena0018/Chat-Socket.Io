@@ -55,8 +55,8 @@ socketServer.on('connection', function (socket) {
    * Retourne le pseudo de l'utilisateur correspondant à l'objet socket passé en paramètre.
    */
   function getNicknameBy(socket) {
-    for (let key in registeredSockets) {
-      if (key == nickname){
+    for (const [key, value] of Object.entries(registeredSockets)) {
+      if (value === socket) {
         return key;
       }
     }
