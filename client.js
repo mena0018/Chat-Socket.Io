@@ -11,6 +11,11 @@ let nickname   = document.querySelector("input[name='nickname']");
 let display    = document.getElementById("display");
 let error      = document.querySelector("div.toast-error");
 let message    = document.querySelector("input[name='message']");
+let button     = document.querySelector(".btn-pseudo");
+// let date     = document.querySelector("date");
+
+// const d = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
+// const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
  
 
 /**
@@ -75,4 +80,16 @@ sendForm.addEventListener("submit", (event) => {
     socketClient.emit(">message", message.value);
     message.innerHTML = "";
   }
-} )
+});
+
+
+/**
+ * Ecouteur d'événement de type <message pour l'objet socketClient afin de
+ * - Afficher le message dans l'élément div#display
+ */
+socketClient.on('<message', (content, text) => {
+  // date.innerHTML += d.toLocaleDateString(undefined, options);
+  button.innerHTML += content ;
+  display.innerHTML += text +'<br>'
+});
+

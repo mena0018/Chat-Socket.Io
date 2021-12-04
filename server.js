@@ -88,6 +88,7 @@ socketServer.on('connection', function (socket) {
      * - Envoyer un événement de type <message à tous les clients connectés
      */
     socket.on('>message', (content) => {
-      socketServer.emit('>message', content);
+      let text = getNicknameBy(socket);
+      socketServer.emit('<message', text, content);
     })
 });
