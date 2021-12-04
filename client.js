@@ -11,12 +11,7 @@ let nickname   = document.querySelector("input[name='nickname']");
 let display    = document.getElementById("display");
 let error      = document.querySelector("div.toast-error");
 let message    = document.querySelector("input[name='message']");
-let button     = document.querySelector(".btn-pseudo");
-// let date     = document.querySelector("date");
 
-// const d = new Date(Date.UTC(2012, 11, 20, 3, 0, 0));
-// const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
- 
 
 /**
  * Ecouteur d'événement submit au formulaire signin afin de :
@@ -87,9 +82,17 @@ sendForm.addEventListener("submit", (event) => {
  * Ecouteur d'événement de type <message pour l'objet socketClient afin de
  * - Afficher le message dans l'élément div#display
  */
-socketClient.on('<message', (content, text) => {
-  // date.innerHTML += d.toLocaleDateString(undefined, options);
-  button.innerHTML += content ;
-  display.innerHTML += text +'<br>'
+socketClient.on('<message', (sender, text) => {
+  const options = { year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+
+  // pseudo.innerHTML = sender;
+  // display.innerHTML += text + '<br>'
+  // pseudo.classList.remove('hidden');
+
+  const date = new Date().toLocaleDateString("fr-FR", options);
+  display.innerHTML += '<span class="pseudo">' + sender + '</span>';
+  display.innerHTML += '<span class="date">' + date + '</span>'+ '<br>';
+  display.innerHTML += '<span>' + text + '</span>';
 });
 

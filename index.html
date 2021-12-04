@@ -27,19 +27,25 @@
     #display {
       flex: 1 1 auto;
       overflow-y: scroll;
+      display: flex;
     }
-    #display button {
-      border-radius: 10px;
-      color: #f1f1f1;
-      background-color: blueviolet;
-      height: 20px;
-      width: 90px
-    }
-    .btn-pseudo {
+
+    .pseudo {
       display: flex;
       align-items: center;
       justify-content: center;
+      height: 20px;
+      width: 90px;
       font-size: 13px;
+      font-weight: 500;
+      border-radius: 10px;
+      color: #f1f1f1;
+      background-color: #5755d9;
+    }
+    
+    .date {
+      color:grey;
+      font-size: 14px;
     }
   </style>
   <title>chat</title>
@@ -68,10 +74,7 @@
       </form>
 
       <div id="display" class="bg-gray p-2 mt-2">
-          <button class="btn-pseudo"></button> 
-          <p class="date"></p>         
       </div>
-
     </div>
   </div>
 
