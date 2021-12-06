@@ -45,9 +45,13 @@ socketClient.on('<connected', (content) => {
 
 
 socketClient.on('<notification', (content) => {
-  display.innerHTML += `<div class="joined"> ${content} à rejoint la conversation </div>`;
+  const action = content.type === "joined" ? "rejoind" : "quitté"
+  display.innerHTML += `<div class="${content.type}"> ${content.pseudo} à ${action} la conversation </div>`;
 });
 
+socketClient.on('<notification2', (content) =>{
+  display.innerHTML += `<div class="left"> ${content} à quitter la conversation </div>`;
+})
 
 /**
  * Ecouteur d'événement de type <error pour l'objet socketClient afin de  :

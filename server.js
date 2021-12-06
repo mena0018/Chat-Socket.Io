@@ -75,7 +75,7 @@ socketServer.on('connection', function (socket) {
 
         registeredSockets[content] = socket;
         socket.emit('<connected', content);
-        socket.broadcast.emit('<notification', content) 
+        socket.broadcast.emit('<notification', { type:"joined", pseudo: content }) 
       } 
       else {
         socket.emit('<error', content);
@@ -90,5 +90,18 @@ socketServer.on('connection', function (socket) {
     socket.on('>message', (content) => {
       let text = getNicknameBy(socket);
       socketServer.emit('<message', text, ent.encode(content));
+    })
+
+    /**
+     * Ecouteur d'événement de type disconnect à l'objet socket afin de:
+     * - supprimer ce socket de l'objet registeredSockets
+     * - envoyer une notification aux autres utilisateurs
+     */
+    socket.on('disconnect', () => {
+      const pseudo = getNicknameBy(socket);
+      delete registeredSockets[pseudo];
+
+      // Pour envoyer qu'a ceux connecté
+      Object.values(registeredSockets).forEach(s => s.emit('<notification', { type:"left", pseudo }));      //socket.broadcast.emit('<notification', { type:"left", pseudo }) 
     })
 });

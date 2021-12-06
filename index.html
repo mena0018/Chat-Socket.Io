@@ -29,6 +29,7 @@
       overflow-y: scroll;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     .pseudo {
@@ -46,7 +47,13 @@
     }
 
     .joined {
-      margin-bottom: 10px;
+      position: absolute;
+      bottom: 0;
+      color: grey;
+    }
+    .left {
+      position: absolute;
+      top: 0;
       color: grey;
     }
     
@@ -55,7 +62,6 @@
       color:grey;
       font-size: 14px;
       font-size: 10px;
-
     }
   </style>
   <title>chat</title>
