@@ -47,7 +47,7 @@ socketClient.on('<connected', (content) => {
  * - Ajouter le message passé en paramètre dans l'élément div#display
  */
 socketClient.on('<notification', (content) => {
-  display.innerHTML += content;
+  display.innerHTML += ` <div class="joined"> ${content} à rejoint la conversation </div>`;
 });
 
 
@@ -86,13 +86,13 @@ socketClient.on('<message', (sender, text) => {
   const options = { year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
 
-  // pseudo.innerHTML = sender;
-  // display.innerHTML += text + '<br>'
-  // pseudo.classList.remove('hidden');
-
   const date = new Date().toLocaleDateString("fr-FR", options);
-  display.innerHTML += '<span class="pseudo">' + sender + '</span>';
-  display.innerHTML += '<span class="date">' + date + '</span>'+ '<br>';
-  display.innerHTML += '<span>' + text + '</span>';
+  display.innerHTML += `
+    <div>
+      <span class="pseudo">${sender}</span>
+      <span class="date">${date}</span>
+    </div>
+    <div class="contenu">${text}</div>
+  `;
 });
 
