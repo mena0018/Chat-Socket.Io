@@ -67,9 +67,7 @@ socketServer.on('connection', function (socket) {
    * Retourne un tableau contenant les pseudos de tous les utilisateurs connectés.
    */
   function getAllNicknames() {
-    Object.keys(registeredSockets).forEach(nickname => {
-      return nickname;
-    })
+    return Object.keys(registeredSockets);
   }
 
   /**
