@@ -3,6 +3,7 @@
  */
 let socketClient = io();
 
+
 socketClient.emit('hello', 'Olivier');
 let signinForm = document.forms["signin"];
 let sendForm   = document.forms["send"];
@@ -42,12 +43,9 @@ socketClient.on('<connected', (content) => {
 });
 
 
-/**
- * Ecouteur d'événement de type <notification pour l'objet socketClient afin de:
- * - Ajouter le message passé en paramètre dans l'élément div#display
- */
+
 socketClient.on('<notification', (content) => {
-  display.innerHTML += ` <div class="joined"> ${content} à rejoint la conversation </div>`;
+  display.innerHTML += `<div class="joined"> ${content} à rejoint la conversation </div>`;
 });
 
 
@@ -63,16 +61,16 @@ socketClient.on('<error', (content) => {
 
 
 /**
- * Ecouteur d'événement submit au formulaire send afin de  :
- * - Envoyer un événement de type >message au serveur avec comme paramètre
- *   la valeur du champ de saisie nommé message
+ * Ecouteur d'événement submit au formulaire signin afin de :
+ * - Envoyer un événement de type >signin au serveur avec comme paramètre 
+ *   la valeur du champ de saisie nommé nickname
  * - Empêcher la soumission du formulaire
- * - Vider le champ de saisie nommé message
  */
+
 sendForm.addEventListener("submit", (event) => {
   event.preventDefault();
   if (message.value) {
-    socketClient.emit(">message", message.value);
+    socketClient.emit(">message",message.value); 
     message.innerHTML = "";
   }
 });
@@ -86,13 +84,13 @@ socketClient.on('<message', (sender, text) => {
   const options = { year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
 
-  const date = new Date().toLocaleDateString("fr-FR", options);
-  display.innerHTML += `
-    <div>
-      <span class="pseudo">${sender}</span>
-      <span class="date">${date}</span>
-    </div>
-    <div class="contenu">${text}</div>
-  `;
+    const date = new Date().toLocaleDateString("fr-FR", options);
+    display.innerHTML += `
+      <div>
+        <span class="pseudo">${sender}</span>
+        <span class="date">${date}</span>
+      </div>
+      <div class="contenu">${text}</div>
+    `;
 });
-
+  

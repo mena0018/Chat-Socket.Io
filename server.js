@@ -1,6 +1,7 @@
 let express = require('express')();
 let http = require('http').createServer(express);
 let fs = require('fs').promises;
+const ent = require('ent');
 
 express.get('/', (request, response) => {
   fs.readFile('./index.html')
@@ -31,7 +32,7 @@ express.get('/client.js', (request, response) => {
 });
 
 // Server listens on port 8080
-http.listen(8080);
+http.listen(5000);
 
 // Binds a socket server to the current HTTP server
 let socketServer = require('socket.io')(http);
@@ -62,7 +63,6 @@ socketServer.on('connection', function (socket) {
     }
   }
 
-  
   /**
    * Ecouteur d'évenement <signin pour l'objet socket afin de : 
    *  - Ajouter le socket à l'objet registeredSockets.
@@ -75,7 +75,7 @@ socketServer.on('connection', function (socket) {
 
         registeredSockets[content] = socket;
         socket.emit('<connected', content);
-        socket.broadcast.emit('<notification', content) //+ ' à rejoint la conversation <br>'
+        socket.broadcast.emit('<notification', content) 
       } 
       else {
         socket.emit('<error', content);
@@ -89,6 +89,6 @@ socketServer.on('connection', function (socket) {
      */
     socket.on('>message', (content) => {
       let text = getNicknameBy(socket);
-      socketServer.emit('<message', text, content);
+      socketServer.emit('<message', text, ent.encode(content));
     })
 });
