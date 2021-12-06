@@ -64,6 +64,15 @@ socketServer.on('connection', function (socket) {
   }
 
   /**
+   * Retourne un tableau contenant les pseudos de tous les utilisateurs connectés.
+   */
+  function getAllNicknames() {
+    Object.keys(registeredSockets).forEach(nickname => {
+      return nickname;
+    })
+  }
+
+  /**
    * Ecouteur d'évenement <signin pour l'objet socket afin de : 
    *  - Ajouter le socket à l'objet registeredSockets.
    *  - Envoyer un événement de type <connected au client.
@@ -101,7 +110,9 @@ socketServer.on('connection', function (socket) {
       const pseudo = getNicknameBy(socket);
       delete registeredSockets[pseudo];
 
-      // Pour envoyer qu'a ceux connecté
-      Object.values(registeredSockets).forEach(s => s.emit('<notification', { type:"left", pseudo }));      //socket.broadcast.emit('<notification', { type:"left", pseudo }) 
+      // Pour envoyer uniquement à ceux connecté
+      Object.values(registeredSockets).forEach(
+        socket => socket.emit('<notification', { type:"left", pseudo })
+        );   
     })
 });

@@ -9,11 +9,25 @@
   <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
   <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
   <style>
+    .container {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+    width: 100%;
+    display: flex;
+    flex: 1;
+    height: 100vh;
+    }
+    
     #dialog {
       display: flex;
       flex-flow: column;
       align-items: stretch;
       height: 90vh;
+      width:70%;
+      flex: 1;
+      height: 99vh;
     }
 
     #signin {
@@ -29,7 +43,37 @@
       overflow-y: scroll;
       display: flex;
       flex-direction: column;
+      flex: 1;
       position: relative;
+    }
+
+    #users {
+      margin: 15px;
+    }
+
+    #users h1 {
+      padding-left: 10px;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    #users h1::after {
+      content: "";
+      width: 100%;
+      display: block;
+      border-bottom: 2px solid lightgray;
+    }
+
+    .user {
+      margin-top:20px;
+      margin-left:10px ;
+    }
+
+    .user::after {
+      content: "";
+      border-bottom: 1px solid lightgray;
+      width: 100%;
+      display: block;
     }
 
     .pseudo {
@@ -46,16 +90,11 @@
       margin-bottom: 20px;
     }
 
-    .joined {
+    .joined-left {
       position: absolute;
       bottom: 0;
       color: grey;
-    }
-    .left {
-      position: absolute;
-      top: 0;
-      color: grey;
-    }
+    } 
     
     .date {
       margin-left: 15px;
@@ -89,10 +128,15 @@
         </div>
       </form>
 
-      <div id="display" class="bg-gray p-2 mt-2">
-      </div>
+      <div id="display" class="bg-gray p-2 mt-2"></div>
     </div>
-  </div>
+    <div id="users">
+      <h1>No users connected</h1>
+        <div class="user"> User1</div>
+        <div class="user"> User2</div>
+        <div class="user"> User3</div>
+    </div>
+</div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="/client.js"></script>
