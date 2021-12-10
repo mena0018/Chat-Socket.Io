@@ -98,7 +98,8 @@ socketClient.on('<message', (sender, text) => {
 
 /**
  * Ecouteur d'événement de type <users afin de
- * - mettre à jour la liste des utilisateurs connecté
+ * - Mettre à jour la liste des utilisateurs connecté 
+ *   dans l'interface du client chat.
  */
 socketClient.on('<users', (content)=> {
 
