@@ -103,6 +103,11 @@ socketClient.on('<message', (sender, text) => {
  */
 socketClient.on('<users', (content)=> {
 
+  /**
+   * Ecouteur d'événement de type click qui devra :
+   * - Mettre à jour le titre de la fenêtre modale en faisant apparaître le nom du destinataire
+   * - Afficher la fenêtre modale
+   */
   let nbr = content.length;
   if (nbr > 0) {
     title.innerHTML = `${nbr} users connected`;
