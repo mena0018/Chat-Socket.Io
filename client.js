@@ -12,6 +12,8 @@ let nickname   = document.querySelector("input[name='nickname']");
 let display    = document.getElementById("display");
 let error      = document.querySelector("div.toast-error");
 let message    = document.querySelector("input[name='message']");
+let users      = document.querySelector("#users>div");
+let title      = document.querySelector("#users>h1");
 
 
 /**
@@ -93,4 +95,21 @@ socketClient.on('<message', (sender, text) => {
       <div class="contenu">${text}</div>
     `;
 });
+
+/**
+ * Ecouteur d'événement de type <users afin de
+ * - mettre à jour la liste des utilisateurs connecté
+ */
+socketClient.on('<users', (content)=> {
+
+  let nbr = content.length;
+  if (nbr > 0) {
+    title.innerHTML = `${nbr} users connected`;
+  }
+
+  users.innerHTML = ``;
+  content.forEach((user) => {
+  users.innerHTML += `<div class="user">${user}</div>`;
+  })
+})
   

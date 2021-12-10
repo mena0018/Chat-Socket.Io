@@ -32,7 +32,7 @@ express.get('/client.js', (request, response) => {
 });
 
 // Server listens on port 8080
-http.listen(5000);
+http.listen(8000);
 
 // Binds a socket server to the current HTTP server
 let socketServer = require('socket.io')(http);
@@ -83,6 +83,8 @@ socketServer.on('connection', function (socket) {
         registeredSockets[content] = socket;
         socket.emit('<connected', content);
         socket.broadcast.emit('<notification', { type:"joined", pseudo: content }) 
+
+        socketServer.emit('<users', (getAllNicknames()));
       } 
       else {
         socket.emit('<error', content);
@@ -112,5 +114,8 @@ socketServer.on('connection', function (socket) {
       Object.values(registeredSockets).forEach(
         socket => socket.emit('<notification', { type:"left", pseudo })
         );   
+      
+      socketServer.emit('<users', (getAllNicknames()));
     })
+
 });
