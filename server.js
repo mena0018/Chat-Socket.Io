@@ -110,11 +110,7 @@ socketServer.on('connection', function (socket) {
       const pseudo = getNicknameBy(socket);
       delete registeredSockets[pseudo];
 
-      // Pour envoyer uniquement à ceux connecté
-      Object.values(registeredSockets).forEach(
-        socket => socket.emit('<notification', { type:"left", pseudo })
-        );   
-      
+      socket.broadcast.emit('<notification', { type:"left", pseudo })
       socketServer.emit('<users', (getAllNicknames()));
     })
 
