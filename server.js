@@ -11,7 +11,7 @@ express.get('/', (request, response) => {
       // Writes response content
       response.end(content);
     })
-    .catch((error) => {
+    .catch(() => {
       // Returns 404 error: page not found
       response.writeHead(404, { 'Content-Type': 'text/plain' });
       response.end('Page not found.');
@@ -24,7 +24,7 @@ express.get('/client.js', (request, response) => {
         response.writeHead(200, { 'Content-Type': 'text/javascript' });
         response.end(content);
       })
-      .catch((error) => {
+      .catch(() => {
         // Returns 404 error: page not found
         response.writeHead(404, { 'Content-Type': 'text/plain' });
         response.end('Page not found.');
@@ -71,11 +71,11 @@ socketServer.on('connection', function (socket) {
   }
 
   /**
-   * Ecouteur d'évenement <signin pour l'objet socket afin de : 
+   * Écouteur d'évènement <signin pour l'objet socket afin de :
    *  - Ajouter le socket à l'objet registeredSockets.
    *  - Envoyer un événement de type <connected au client.
    *  - Envoyer un événement de type <notification à tous les autres.
-   *  - Afficher un événement de type <error en cas d'utilisation d'un pseudo non dispo.
+   *  - Afficher un événement de type <error en cas d'utilisation d'un pseudo non disponible.
    */
     socket.on('>signin', (content) => {
       if (isAvailable(content)) {
@@ -93,7 +93,7 @@ socketServer.on('connection', function (socket) {
 
 
     /**
-     * Ecouteur d'évenement <message pour l'objet socket afin de : 
+     * Écouteur d'évènement <message pour l'objet socket afin de :
      * - Envoyer un événement de type <message à tous les clients connectés
      */
     socket.on('>message', (content) => {
@@ -102,7 +102,7 @@ socketServer.on('connection', function (socket) {
     })
 
     /**
-     * Ecouteur d'événement de type disconnect à l'objet socket afin de:
+     * Écouteur d'événement de type disconnect à l'objet socket afin de:
      * - supprimer ce socket de l'objet registeredSockets
      * - envoyer une notification aux autres utilisateurs
      */

@@ -17,7 +17,7 @@ let title      = document.querySelector("#users>h1");
 
 
 /**
- * Ecouteur d'événement submit au formulaire signin afin de :
+ * Écouteur d'événement submit au formulaire signin afin de :
  * - Envoyer un événement de type >signin au serveur avec comme paramètre 
  *   la valeur du champ de saisie nommé nickname
  * - Empêcher la soumission du formulaire
@@ -30,8 +30,8 @@ let title      = document.querySelector("#users>h1");
 });
 
 
-/*
- * Ecouteur d'événement de type <connected pour l'objet socketClient afin de:
+/**
+ * Écouteur d'événement de type <connected pour l'objet socketClient afin de:
  * - Masquer le formulaire signin
  * - Ajouter le pseudo comme contenu textuel de l'élément span du formulaire send
  * - Afficher le formulaire send
@@ -52,7 +52,7 @@ socketClient.on('<notification', (content) => {
 
 
 /**
- * Ecouteur d'événement de type <error pour l'objet socketClient afin de  :
+ * Écouteur d'événement de type <error pour l'objet socketClient afin de  :
  * - Renseigner le message d'erreur dans l'élément div.toast-error
  * - Afficher l'élément div.toast-error
  */
@@ -63,7 +63,7 @@ socketClient.on('<error', (content) => {
 
 
 /**
- * Ecouteur d'événement submit au formulaire signin afin de :
+ * Écouteur d'événement submit au formulaire signin afin de :
  * - Envoyer un événement de type >signin au serveur avec comme paramètre 
  *   la valeur du champ de saisie nommé nickname
  * - Empêcher la soumission du formulaire
@@ -79,7 +79,7 @@ sendForm.addEventListener("submit", (event) => {
 
 
 /**
- * Ecouteur d'événement de type <message pour l'objet socketClient afin de
+ * Écouteur d'événement de type <message pour l'objet socketClient afin de
  * - Afficher le message dans l'élément div#display
  */
 socketClient.on('<message', (sender, text) => {
@@ -97,14 +97,14 @@ socketClient.on('<message', (sender, text) => {
 });
 
 /**
- * Ecouteur d'événement de type <users afin de
+ * Écouteur d'événement de type <users afin de
  * - Mettre à jour la liste des utilisateurs connecté 
  *   dans l'interface du client chat.
  */
 socketClient.on('<users', (content)=> {
 
   /**
-   * Ecouteur d'événement de type click qui devra :
+   * Écouteur d'événement de type click qui devra :
    * - Mettre à jour le titre de la fenêtre modale en faisant apparaître le nom du destinataire
    * - Afficher la fenêtre modale
    */
