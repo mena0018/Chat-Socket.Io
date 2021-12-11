@@ -3,8 +3,7 @@
  */
 let socketClient = io();
 
-
-socketClient.emit('hello', 'Olivier');
+socketClient.emit("hello", "Olivier");
 let signinForm = document.forms["signin"];
 let sendForm   = document.forms["send"];
 let span       = document.querySelector("span");
@@ -14,21 +13,20 @@ let error      = document.querySelector("div.toast-error");
 let message    = document.querySelector("input[name='message']");
 let users      = document.querySelector("#users>div");
 let title      = document.querySelector("#users>h1");
-
+let user       = document.querySelector(".user");
 
 /**
  * Écouteur d'événement submit au formulaire signin afin de :
- * - Envoyer un événement de type >signin au serveur avec comme paramètre 
+ * - Envoyer un événement de type >signin au serveur avec comme paramètre
  *   la valeur du champ de saisie nommé nickname
  * - Empêcher la soumission du formulaire
  */
- signinForm.addEventListener("submit", (event) => {
+signinForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  if (nickname.value){
-      socketClient.emit('>signin', nickname.value);
+  if (nickname.value) {
+    socketClient.emit(">signin", nickname.value);
   }
 });
-
 
 /**
  * Écouteur d'événement de type <connected pour l'objet socketClient afin de:
@@ -37,57 +35,59 @@ let title      = document.querySelector("#users>h1");
  * - Afficher le formulaire send
  * - Masquer la div toast error
  */
-socketClient.on('<connected', (content) => {
+socketClient.on("<connected", (content) => {
   signinForm.classList.add("hidden");
   sendForm.classList.remove("hidden");
   error.classList.add("hidden");
   span.innerHTML = content;
 });
 
-
-socketClient.on('<notification', (content) => {
-  const action = content.type === "joined" ? "rejoint" : "quitté"
+socketClient.on("<notification", (content) => {
+  const action = content.type === "joined" ? "rejoint" : "quitté";
   display.innerHTML = `<div class="joined-left"> ${content.pseudo} à ${action} la conversation </div>`;
 });
-
 
 /**
  * Écouteur d'événement de type <error pour l'objet socketClient afin de  :
  * - Renseigner le message d'erreur dans l'élément div.toast-error
  * - Afficher l'élément div.toast-error
  */
-socketClient.on('<error', (content) => {
+socketClient.on("<error", (content) => {
   error.classList.remove("hidden");
-  error.innerHTML = 'Le pseudo ' + content + ' est déjà utilisé';
+  error.innerHTML = "Le pseudo " + content + " est déjà utilisé";
 });
-
 
 /**
  * Écouteur d'événement submit au formulaire signin afin de :
- * - Envoyer un événement de type >signin au serveur avec comme paramètre 
+ * - Envoyer un événement de type >signin au serveur avec comme paramètre
  *   la valeur du champ de saisie nommé nickname
  * - Empêcher la soumission du formulaire
  */
-
 sendForm.addEventListener("submit", (event) => {
   event.preventDefault();
   if (message.value) {
-    socketClient.emit(">message",message.value); 
+    socketClient.emit(">message", message.value);
     message.innerHTML = "";
   }
 });
-
 
 /**
  * Écouteur d'événement de type <message pour l'objet socketClient afin de
  * - Afficher le message dans l'élément div#display
  */
-socketClient.on('<message', (sender, text) => {
-  const options = { year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+socketClient.on("<message", (sender, text) => {
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  };
 
-    const date = new Date().toLocaleDateString("fr-FR", options);
-    display.innerHTML += `
+  const date = new Date().toLocaleDateString("fr-FR", options);
+  display.innerHTML += `
       <div>
         <span class="pseudo">${sender}</span>
         <span class="date">${date}</span>
@@ -98,16 +98,10 @@ socketClient.on('<message', (sender, text) => {
 
 /**
  * Écouteur d'événement de type <users afin de
- * - Mettre à jour la liste des utilisateurs connecté 
+ * - Mettre à jour la liste des utilisateurs connecté
  *   dans l'interface du client chat.
  */
-socketClient.on('<users', (content)=> {
-
-  /**
-   * Écouteur d'événement de type click qui devra :
-   * - Mettre à jour le titre de la fenêtre modale en faisant apparaître le nom du destinataire
-   * - Afficher la fenêtre modale
-   */
+socketClient.on("<users", (content) => {
   let nbr = content.length;
   if (nbr > 0) {
     title.innerHTML = `${nbr} users connected`;
@@ -115,7 +109,24 @@ socketClient.on('<users', (content)=> {
 
   users.innerHTML = ``;
   content.forEach((user) => {
-  users.innerHTML += `<div class="user">${user}</div>`;
-  })
-})
-  
+    users.innerHTML += `<div class="user" onClick="">${user} `;
+    user.addEventListener("click", () => {
+    user.innerHTML += `
+      <a href="#demo">Message privé</a>
+      <div id="demo" className="modal">
+        <div className="modal_content">
+        <h5>Message privé à ${user}</h5>
+          <form name="send2" class="mt-2">
+            <div class="input-group">
+              <span class="input-group-addon hide-sm">pseudo</span>
+              <input name="message" type="text" class="form-input" placeholder="type your message here">
+              <input type="submit" class="btn btn-warning input-group-btn" value="send">
+            </div>
+          </form>
+          <a href="#" className="modal_close">&times;</a>
+        </div>
+      </div>
+    </div>`;
+    });
+  });
+});
