@@ -90,7 +90,12 @@
       margin-bottom: 20px;
     }
 
-    .joined-left {
+    .joined {
+      position: absolute;
+      bottom: 0;
+      color: grey;
+    } 
+    .left {
       position: absolute;
       bottom: 0;
       color: grey;
@@ -107,19 +112,22 @@
 
     a {
       text-decoration: none;
-      padding: 15px;
+      padding: 2px;
       background-color: white;
       border-radius: 5px;
       text-transform: uppercase;
       color: black;
+      font-size: 10px;
     }
 
     .modal {
       visibility: hidden;
       opacity: 0;
       position: absolute;
-      top: 0; right: 0;
-      bottom: 0; left: 0;
+      top: 0; 
+      right: 0;
+      bottom: 0; 
+      left: 0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -185,24 +193,18 @@
     </div>
     <div id="users">
       <h1>No users connected</h1>
-      <div></div>
 
-      <!-- Fenêtre modal -->
-      <!-- <a href="#demo">Message privé</a>
-      <div id="demo" class="modal">
-        <div class="modal_content">
-          <h5>Message privé pour</h5>
-          <form name="send2" class="mt-2">
-            <div class="input-group">
-              <span class="input-group-addon hide-sm">pseudo</span>
-              <input name="message" type="text" class="form-input" placeholder="type your message here">
-              <input type="submit" class="btn btn-warning input-group-btn" value="send">
-            </div>
-          </form>
-          <a href="#" class="modal_close">&times;</a>
-        </div>
+      <div>
+        <!-- <form name="private" class="mt-2 hidden">
+          <div class="input-group">
+            <span class="input-group-addon hide-sm">raoul</span>
+            <input name="message-private" type="text" class="form-input" placeholder="type your message here">
+            <input type="submit" class="btn btn-error" value="send">
+          </div>
+        </form> -->
       </div>
-    </div> -->
+    </div>
+  </div>
 </div>
 
   <script src="/socket.io/socket.io.js"></script>

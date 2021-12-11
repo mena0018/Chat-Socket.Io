@@ -4,16 +4,20 @@
 let socketClient = io();
 
 socketClient.emit("hello", "Olivier");
-let signinForm = document.forms["signin"];
-let sendForm   = document.forms["send"];
-let span       = document.querySelector("span");
-let nickname   = document.querySelector("input[name='nickname']");
-let display    = document.getElementById("display");
-let error      = document.querySelector("div.toast-error");
-let message    = document.querySelector("input[name='message']");
-let users      = document.querySelector("#users>div");
-let title      = document.querySelector("#users>h1");
-let user       = document.querySelector(".user");
+let signinForm  = document.forms["signin"];
+let sendForm    = document.forms["send"];
+let privateForm = document.forms["private"];
+let nickname    = document.querySelector("input[name='nickname']");
+let message     = document.querySelector("input[name='message']");
+let messagePrv  = document.querySelector("input[name='message-private']");
+
+let span        = document.querySelector("span");
+let display     = document.getElementById("display");
+let error       = document.querySelector("div.toast-error");
+let users       = document.querySelector("#users>div");
+let title       = document.querySelector("#users>h1");
+let user        = document.querySelector(".user");
+
 
 /**
  * Écouteur d'événement submit au formulaire signin afin de :
@@ -44,7 +48,7 @@ socketClient.on("<connected", (content) => {
 
 socketClient.on("<notification", (content) => {
   const action = content.type === "joined" ? "rejoint" : "quitté";
-  display.innerHTML = `<div class="joined-left"> ${content.pseudo} à ${action} la conversation </div>`;
+  display.innerHTML = `<div class="${content.type}"> ${content.pseudo} à ${action} la conversation </div>`;
 });
 
 /**
@@ -109,24 +113,35 @@ socketClient.on("<users", (content) => {
 
   users.innerHTML = ``;
   content.forEach((user) => {
-    users.innerHTML += `<div class="user" onClick="">${user} `;
-    user.addEventListener("click", () => {
-    user.innerHTML += `
-      <a href="#demo">Message privé</a>
-      <div id="demo" className="modal">
-        <div className="modal_content">
-        <h5>Message privé à ${user}</h5>
-          <form name="send2" class="mt-2">
-            <div class="input-group">
-              <span class="input-group-addon hide-sm">pseudo</span>
-              <input name="message" type="text" class="form-input" placeholder="type your message here">
-              <input type="submit" class="btn btn-warning input-group-btn" value="send">
-            </div>
-          </form>
-          <a href="#" className="modal_close">&times;</a>
-        </div>
+  users.innerHTML += `<div class="user">${user} 
+  <a href="#demo">Message privé</a>
+    <div id="demo" class="modal">
+      <div class="modal_content">
+      <h5>Message privé à ${user}</h5>
+        <form name="private" class="mt-2">
+          <div class="input-group">
+            <span class="input-group-addon hide-sm">${user} </span>
+            <input name="message-private" type="text" class="form-input" placeholder="type your message here">
+            <input type="submit" class="btn btn-error" value="send">
+          </div>
+        </form>
+        <a href="#" class="modal_close">&times;</a>
       </div>
-    </div>`;
-    });
+    </div>
+  </div>`;
+  //user.addEventListener("click", () => {});
   });
+});
+
+
+ 
+/**
+ * L'événement de type >private envoyé au serveur aura pour paramètre un objet composé    * des propriétés recipient et text.
+ */
+privateForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (messagePrv.value) {
+    socketClient.emit(">private", messagePrv.value);
+    messagePrv.innerHTML = "";
+  }
 });
