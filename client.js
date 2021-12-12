@@ -12,6 +12,8 @@ let message     = document.querySelector("input[name='message']");
 let messagePrv  = document.querySelector("input[name='message-private']");
 
 let span        = document.querySelector("span");
+let spanPrv     = document.querySelector(".spanPrv");
+
 let display     = document.getElementById("display");
 let error       = document.querySelector("div.toast-error");
 let users       = document.querySelector("#users>div");
@@ -100,6 +102,7 @@ socketClient.on("<message", (sender, text) => {
     `;
 });
 
+
 /**
  * Écouteur d'événement de type <users afin de
  * - Mettre à jour la liste des utilisateurs connecté
@@ -129,19 +132,38 @@ socketClient.on("<users", (content) => {
       </div>
     </div>
   </div>`;
-  //user.addEventListener("click", () => {});
   });
 });
 
+socketClient.on(">private", (recipient, text) => {});
 
- 
-/**
- * L'événement de type >private envoyé au serveur aura pour paramètre un objet composé    * des propriétés recipient et text.
- */
-privateForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  if (messagePrv.value) {
-    socketClient.emit(">private", messagePrv.value);
-    messagePrv.innerHTML = "";
-  }
-});
+
+
+//  socketClient.on("<users", (content) => {
+//   let nbr = content.length;
+//   if (nbr > 0) {
+//     title.innerHTML = `${nbr} users connected`;
+//   }
+
+//   users.innerHTML = ``;
+//   content.forEach((pseudo) => {
+//   users.innerHTML += `<div class="user">${pseudo}`;
+  
+//   user.addEvenListener("click", () => {
+//     users.innerHTML += `
+    
+//   <a href="#demo">Message privé</a>
+//     <div id="demo" class="modal">
+//       <div class="modal_content">
+//       <h5>Message privé à ${pseudo}</h5>` 
+
+//       privateForm.classList.remove("hidden");
+//       spanPrv.innerHTML = pseudo;
+      
+//        `<a href="#" class="modal_close">&times;</a>
+//       </div>
+//     </div>
+//   </div> `
+//   })
+//   });
+// });

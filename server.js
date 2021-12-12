@@ -114,4 +114,21 @@ socketServer.on('connection', function (socket) {
       socketServer.emit('<users', (getAllNicknames()));
     })
 
+    /**
+     * Écouteur d'événement de type >private qui, si l'utilisateur référencé 
+     *   par la propriété recipient existe, devra :
+     * 
+     * - Déterminer le nom de l'expéditeur à partir du socket
+     * - Envoyer au destinataire un événement de type <private avec comme paramètre un *      objet ayant pour propriétés sender et text
+     * - Envoyer le même événement à l'expéditeur
+     */
+    socket.on(">private", () => {
+      if (recipient != null) {
+
+        const pseudo = getNicknameBy(socket);
+        socket.emit("<private", { sender, text });
+        socket.emit(">private", { sender, text });
+      }
+    })
+
 });
