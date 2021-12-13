@@ -116,54 +116,69 @@ socketClient.on("<users", (content) => {
 
   users.innerHTML = ``;
   content.forEach((user) => {
-  users.innerHTML += `<div class="user">${user} 
-  <a href="#demo">Message privé</a>
-    <div id="demo" class="modal">
-      <div class="modal_content">
-      <h5>Message privé à ${user}</h5>
-        <form name="private" class="mt-2">
-          <div class="input-group">
-            <span class="input-group-addon hide-sm">${user} </span>
-            <input name="message-private" type="text" class="form-input" placeholder="type your message here">
-            <input type="submit" class="btn btn-error" value="send">
-          </div>
-        </form>
-        <a href="#" class="modal_close">&times;</a>
+    const userElt = document.createElement("div")
+    userElt.className = "user";
+    userElt.innerHTML = `${user} `
+    users.appendChild(userElt)
+
+    userElt.onclick = function () {
+      const modal = document.createElement("div")
+      modal.innerHTML = `
+      <div id="demo" class="modal">
+        <div class="modal_content">
+        <h5>Message privé à ${user}</h5>
+          <form name="private" class="mt-2">
+            <div class="input-group">
+              <span class="input-group-addon hide-sm">${user} </span>
+              <input name="message-private" type="text" class="form-input" placeholder="type your message here">
+              <input type="submit" class="btn btn-error" value="send">
+            </div>
+          </form>
+          <a href="#" class="modal_close">&times;</a>
+        </div>
       </div>
-    </div>
-  </div>`;
+      `;
+
+    const close = modal.querySelector(".modal_close")
+    close.onclick = function () {
+      modal.remove();
+    }
+
+    const form = modal.querySelector("form[name='private']")
+    form.onsubmit = function(e) {
+      e.preventDefault();
+      // console.log(user, " => ", form["message-private"].value)
+      socketClient.emit(">private", {recipient: user, text: form["message-private"].value});
+      modal.remove();
+    }
+    document.body.appendChild(modal)
+    }
   });
 });
 
-socketClient.on(">private", (recipient, text) => {});
 
+/**
+ * Écouteur d'événement de type <private pour l'objet socketClient afin de
+ * - Afficher le message privé dans l'élément div#display
+ */
+socketClient.on("<private", ({sender, text}) => {
+  // console.log(sender, text)
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  };
 
-
-//  socketClient.on("<users", (content) => {
-//   let nbr = content.length;
-//   if (nbr > 0) {
-//     title.innerHTML = `${nbr} users connected`;
-//   }
-
-//   users.innerHTML = ``;
-//   content.forEach((pseudo) => {
-//   users.innerHTML += `<div class="user">${pseudo}`;
-  
-//   user.addEvenListener("click", () => {
-//     users.innerHTML += `
-    
-//   <a href="#demo">Message privé</a>
-//     <div id="demo" class="modal">
-//       <div class="modal_content">
-//       <h5>Message privé à ${pseudo}</h5>` 
-
-//       privateForm.classList.remove("hidden");
-//       spanPrv.innerHTML = pseudo;
-      
-//        `<a href="#" class="modal_close">&times;</a>
-//       </div>
-//     </div>
-//   </div> `
-//   })
-//   });
-// });
+  const date = new Date().toLocaleDateString("fr-FR", options);
+  display.innerHTML += `
+      <div>
+        <span class="pseudo-prv">${sender}</span>
+        <span class="date">${date}</span>
+      </div>
+      <div class="contenu">${text}</div>
+    `;
+});

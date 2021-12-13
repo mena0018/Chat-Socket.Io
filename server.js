@@ -105,7 +105,7 @@ socketServer.on('connection', function (socket) {
      * Écouteur d'événement de type disconnect à l'objet socket afin de:
      * - supprimer ce socket de l'objet registeredSockets
      * - envoyer une notification aux autres utilisateurs
-     */
+     */ 
     socket.on('disconnect', () => {
       const pseudo = getNicknameBy(socket);
       delete registeredSockets[pseudo];
@@ -122,13 +122,11 @@ socketServer.on('connection', function (socket) {
      * - Envoyer au destinataire un événement de type <private avec comme paramètre un *      objet ayant pour propriétés sender et text
      * - Envoyer le même événement à l'expéditeur
      */
-    socket.on(">private", () => {
-      if (recipient != null) {
-
-        const pseudo = getNicknameBy(socket);
+    socket.on(">private", ({recipient, text}) => {
+      if (!isAvailable(recipient)) {
+        const sender = getNicknameBy(socket);
         socket.emit("<private", { sender, text });
-        socket.emit(">private", { sender, text });
+        registeredSockets[recipient].emit("<private", { sender, text });
       }
     })
-
 });
