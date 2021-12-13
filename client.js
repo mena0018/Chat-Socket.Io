@@ -184,3 +184,15 @@ socketClient.on("<private", ({sender, text}) => {
       <div class="contenu">${text}</div>
     `;
 });
+
+
+/**
+ * Ecouteur d'événement de type change à l'élément input type="file" afin :
+ * - de charger le fichier image en mémoire
+ * - de le convertir au format URL
+ * - d'envoyer un événement de type >image au serveur de sockets
+ */
+let file = document.querySelector("input[type='file']");
+file.on("change", () => {
+
+})
