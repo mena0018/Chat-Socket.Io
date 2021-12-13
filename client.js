@@ -131,6 +131,9 @@ socketClient.on("<users", (content) => {
             <div class="input-group">
               <span class="input-group-addon hide-sm">${user} </span>
               <input name="message-private" type="text" class="form-input" placeholder="type your message here">
+              <label>
+                <input name="picture" class="icon icon-2x icon-photo" type="file" accept="image/jpeg image/png image/gif">
+              </label>
               <input type="submit" class="btn btn-error" value="send">
             </div>
           </form>
@@ -162,7 +165,6 @@ socketClient.on("<users", (content) => {
  * - Afficher le message privé dans l'élément div#display
  */
 socketClient.on("<private", ({sender, text}) => {
-  // console.log(sender, text)
   const options = {
     year: "numeric",
     month: "2-digit",
