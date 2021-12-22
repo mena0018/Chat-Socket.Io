@@ -4,22 +4,21 @@
 let socketClient = io();
 
 socketClient.emit("hello", "Olivier");
-let signinForm  = document.forms["signin"];
-let sendForm    = document.forms["send"];
+let signinForm = document.forms["signin"];
+let sendForm = document.forms["send"];
 let privateForm = document.forms["private"];
-let nickname    = document.querySelector("input[name='nickname']");
-let message     = document.querySelector("input[name='message']");
-let messagePrv  = document.querySelector("input[name='message-private']");
+let nickname = document.querySelector("input[name='nickname']");
+let message = document.querySelector("input[name='message']");
+let messagePrv = document.querySelector("input[name='message-private']");
 
-let span        = document.querySelector("span");
-let spanPrv     = document.querySelector(".spanPrv");
+let span = document.querySelector("span");
+let spanPrv = document.querySelector(".spanPrv");
 
-let display     = document.getElementById("display");
-let error       = document.querySelector("div.toast-error");
-let users       = document.querySelector("#users>div");
-let title       = document.querySelector("#users>h1");
-let user        = document.querySelector(".user");
-
+let display = document.getElementById("display");
+let error = document.querySelector("div.toast-error");
+let users = document.querySelector("#users>div");
+let title = document.querySelector("#users>h1");
+let user = document.querySelector(".user");
 
 /**
  * Écouteur d'événement submit au formulaire signin afin de :
@@ -102,7 +101,6 @@ socketClient.on("<message", (sender, text) => {
     `;
 });
 
-
 /**
  * Écouteur d'événement de type <users afin de
  * - Mettre à jour la liste des utilisateurs connecté
@@ -116,13 +114,13 @@ socketClient.on("<users", (content) => {
 
   users.innerHTML = ``;
   content.forEach((user) => {
-    const userElt = document.createElement("div")
+    const userElt = document.createElement("div");
     userElt.className = "user";
-    userElt.innerHTML = `${user} `
-    users.appendChild(userElt)
+    userElt.innerHTML = `${user} `;
+    users.appendChild(userElt);
 
     userElt.onclick = function () {
-      const modal = document.createElement("div")
+      const modal = document.createElement("div");
       modal.innerHTML = `
       <div id="demo" class="modal">
         <div class="modal_content">
@@ -132,7 +130,7 @@ socketClient.on("<users", (content) => {
               <span class="input-group-addon hide-sm">${user} </span>
               <input name="message-private" type="text" class="form-input" placeholder="type your message here">
               <label>
-                <input name="picture" class="icon icon-2x icon-photo" type="file" accept="image/jpeg image/png image/gif">
+                <input name="picture" class="icon icon-2x icon-photo picture" type="file" accept="image/jpeg image/png image/gif">
               </label>
               <input type="submit" class="btn btn-error" value="send">
             </div>
@@ -142,29 +140,30 @@ socketClient.on("<users", (content) => {
       </div>
       `;
 
-    const close = modal.querySelector(".modal_close")
-    close.onclick = function () {
-      modal.remove();
-    }
+      const close = modal.querySelector(".modal_close");
+      close.onclick = function () {
+        modal.remove();
+      };
 
-    const form = modal.querySelector("form[name='private']")
-    form.onsubmit = function(e) {
-      e.preventDefault();
-      // console.log(user, " => ", form["message-private"].value)
-      socketClient.emit(">private", {recipient: user, text: form["message-private"].value});
-      modal.remove();
-    }
-    document.body.appendChild(modal)
-    }
+      const form = modal.querySelector("form[name='private']");
+      form.onsubmit = function (e) {
+        e.preventDefault();
+        socketClient.emit(">private", {
+          recipient: user,
+          text: form["message-private"].value,
+        });
+        modal.remove();
+      };
+      document.body.appendChild(modal);
+    };
   });
 });
-
 
 /**
  * Écouteur d'événement de type <private pour l'objet socketClient afin de
  * - Afficher le message privé dans l'élément div#display
  */
-socketClient.on("<private", ({sender, text}) => {
+socketClient.on("<private", ({ sender, text }) => {
   const options = {
     year: "numeric",
     month: "2-digit",
@@ -185,14 +184,25 @@ socketClient.on("<private", ({sender, text}) => {
     `;
 });
 
-
 /**
- * Ecouteur d'événement de type change à l'élément input type="file" afin :
+ * Écouteur d'événement de type change à l'élément input type="file" afin :
  * - de charger le fichier image en mémoire
  * - de le convertir au format URL
  * - d'envoyer un événement de type >image au serveur de sockets
  */
-let file = document.querySelector("input[type='file']");
-file.on("change", () => {
+let inputFile = document.querySelector("input[type='file']");
+inputFile.addEventListener("change", function (event) {
+  const reader = new FileReader();
+  reader.onload = function () {
+    dataURL = reader.result;
+    socketClient.emit(">image", dataUrl);
+  };
+  reader.readAsDataURL(event.target.files[0]);
 
-})
+  // En plus, limite de taille pour un fichier
+  for (const f of inputFile.files) {
+    if (f.size > 900000) {
+      alert(`${f.name} est trop volumineux, MAX 900KB`);
+    }
+  }
+});
