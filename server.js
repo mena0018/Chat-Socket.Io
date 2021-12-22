@@ -135,7 +135,7 @@ socketServer.on("connection", function (socket) {
    * - Envoyer un événement de type >image à tous les clients connectés
    */
   socket.on(">image", (content) => {
-    let text = getNicknameBy(socket);
-    socketServer.emit("<image", { text, content });
+    let pseudo = getNicknameBy(socket);
+    socketServer.emit("<image", { pseudo, content });
   });
 });

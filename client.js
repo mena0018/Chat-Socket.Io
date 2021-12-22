@@ -206,7 +206,7 @@ inputFile.addEventListener("change", function (event) {
  * Écouteur d'événement de type <image pour l'objet socketClient afin de
  * - Afficher l'image dans l'élément div#display
  */
-socketClient.on("<image", (sender, text) => {
+socketClient.on("<image", (content) => {
   const options = {
     year: "numeric",
     month: "2-digit",
@@ -216,13 +216,13 @@ socketClient.on("<image", (sender, text) => {
     second: "2-digit",
     hour12: true,
   };
-
+  console.log();
   const date = new Date().toLocaleDateString("fr-FR", options);
   display.innerHTML += `
       <div>
-        <span class="pseudo">${sender}</span>
+        <span class="pseudo">${content.pseudo}</span>
         <span class="date">${date}</span>
       </div>
-      <img src="${text}" class="contenu img-responsive"></img>
+      <img src="${content.content}" class="contenu img-responsive"></img>
     `;
 });
