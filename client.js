@@ -194,15 +194,35 @@ let inputFile = document.querySelector("input[type='file']");
 inputFile.addEventListener("change", function (event) {
   const reader = new FileReader();
   reader.onload = function () {
-    dataURL = reader.result;
-    socketClient.emit(">image", dataUrl);
+    // création du lien
+    const dataURL = reader.result;
+    socketClient.emit(">image", dataURL);
   };
+  // Choix du premier fichier sélectionné par l'utilisateur
   reader.readAsDataURL(event.target.files[0]);
+});
 
-  // En plus, limite de taille pour un fichier
-  for (const f of inputFile.files) {
-    if (f.size > 900000) {
-      alert(`${f.name} est trop volumineux, MAX 900KB`);
-    }
-  }
+/**
+ * Écouteur d'événement de type <image pour l'objet socketClient afin de
+ * - Afficher l'image dans l'élément div#display
+ */
+socketClient.on("<image", (sender, text) => {
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  };
+
+  const date = new Date().toLocaleDateString("fr-FR", options);
+  display.innerHTML += `
+      <div>
+        <span class="pseudo">${sender}</span>
+        <span class="date">${date}</span>
+      </div>
+      <img src="${text}" class="contenu img-responsive"></img>
+    `;
 });

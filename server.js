@@ -1,51 +1,51 @@
-let express = require('express')();
-let http = require('http').createServer(express);
-let fs = require('fs').promises;
-const ent = require('ent');
+let express = require("express")();
+let http = require("http").createServer(express);
+let fs = require("fs").promises;
+const ent = require("ent");
 
-express.get('/', (request, response) => {
-  fs.readFile('./index.html')
+express.get("/", (request, response) => {
+  fs.readFile("./index.html")
     .then((content) => {
       // Writes response header
-      response.writeHead(200, { 'Content-Type': 'text/html' });
+      response.writeHead(200, { "Content-Type": "text/html" });
       // Writes response content
       response.end(content);
     })
     .catch(() => {
       // Returns 404 error: page not found
-      response.writeHead(404, { 'Content-Type': 'text/plain' });
-      response.end('Page not found.');
+      response.writeHead(404, { "Content-Type": "text/plain" });
+      response.end("Page not found.");
     });
 });
 
-express.get('/client.js', (request, response) => {
-    fs.readFile('./client.js')
-      .then((content)=> {
-        response.writeHead(200, { 'Content-Type': 'text/javascript' });
-        response.end(content);
-      })
-      .catch(() => {
-        // Returns 404 error: page not found
-        response.writeHead(404, { 'Content-Type': 'text/plain' });
-        response.end('Page not found.');
-      });
+express.get("/client.js", (request, response) => {
+  fs.readFile("./client.js")
+    .then((content) => {
+      response.writeHead(200, { "Content-Type": "text/javascript" });
+      response.end(content);
+    })
+    .catch(() => {
+      // Returns 404 error: page not found
+      response.writeHead(404, { "Content-Type": "text/plain" });
+      response.end("Page not found.");
+    });
 });
 
 // Server listens on port 8080
 http.listen(8000);
 
 // Binds a socket server to the current HTTP server
-let socketServer = require('socket.io')(http);
+let socketServer = require("socket.io")(http);
 let registeredSockets = {};
 
 // Registers an event listener ('connection' event)
-socketServer.on('connection', function (socket) {
-  console.log('A new user is connected...');
+socketServer.on("connection", function (socket) {
+  console.log("A new user is connected...");
 
   /**
    * Retourne un booléen indiquant si le pseudo est disponible ou pas.
    */
-  function isAvailable (nickname) {
+  function isAvailable(nickname) {
     if (registeredSockets[nickname] === undefined) {
       return true;
     }
@@ -77,56 +77,65 @@ socketServer.on('connection', function (socket) {
    *  - Envoyer un événement de type <notification à tous les autres.
    *  - Afficher un événement de type <error en cas d'utilisation d'un pseudo non disponible.
    */
-    socket.on('>signin', (content) => {
-      if (isAvailable(content)) {
+  socket.on(">signin", (content) => {
+    if (isAvailable(content)) {
+      registeredSockets[content] = socket;
+      socket.emit("<connected", content);
+      socket.broadcast.emit("<notification", {
+        type: "joined",
+        pseudo: content,
+      });
 
-        registeredSockets[content] = socket;
-        socket.emit('<connected', content);
-        socket.broadcast.emit('<notification', { type:"joined", pseudo: content }) 
+      socketServer.emit("<users", getAllNicknames());
+    } else {
+      socket.emit("<error", content);
+    }
+  });
 
-        socketServer.emit('<users', (getAllNicknames()));
-      } 
-      else {
-        socket.emit('<error', content);
-      }
-    });
+  /**
+   * Écouteur d'évènement >message pour l'objet socket afin de :
+   * - Envoyer un événement de type >message à tous les clients connectés
+   */
+  socket.on(">message", (content) => {
+    let text = getNicknameBy(socket);
+    socketServer.emit("<message", text, ent.encode(content));
+  });
 
+  /**
+   * Écouteur d'événement de type disconnect à l'objet socket afin de:
+   * - supprimer ce socket de l'objet registeredSockets
+   * - envoyer une notification aux autres utilisateurs
+   */
+  socket.on("disconnect", () => {
+    const pseudo = getNicknameBy(socket);
+    delete registeredSockets[pseudo];
 
-    /**
-     * Écouteur d'évènement <message pour l'objet socket afin de :
-     * - Envoyer un événement de type <message à tous les clients connectés
-     */
-    socket.on('>message', (content) => {
-      let text = getNicknameBy(socket);
-      socketServer.emit('<message', text, ent.encode(content));
-    })
+    socket.broadcast.emit("<notification", { type: "left", pseudo });
+    socketServer.emit("<users", getAllNicknames());
+  });
 
-    /**
-     * Écouteur d'événement de type disconnect à l'objet socket afin de:
-     * - supprimer ce socket de l'objet registeredSockets
-     * - envoyer une notification aux autres utilisateurs
-     */ 
-    socket.on('disconnect', () => {
-      const pseudo = getNicknameBy(socket);
-      delete registeredSockets[pseudo];
+  /**
+   * Écouteur d'événement de type >private qui, si l'utilisateur référencé
+   *   par la propriété recipient existe, devra :
+   *
+   * - Déterminer le nom de l'expéditeur à partir du socket
+   * - Envoyer au destinataire un événement de type <private avec comme paramètre un *      objet ayant pour propriétés sender et text
+   * - Envoyer le même événement à l'expéditeur
+   */
+  socket.on(">private", ({ recipient, text }) => {
+    if (!isAvailable(recipient)) {
+      const sender = getNicknameBy(socket);
+      socket.emit("<private", { sender, text });
+      registeredSockets[recipient].emit("<private", { sender, text });
+    }
+  });
 
-      socket.broadcast.emit('<notification', { type:"left", pseudo })
-      socketServer.emit('<users', (getAllNicknames()));
-    })
-
-    /**
-     * Écouteur d'événement de type >private qui, si l'utilisateur référencé 
-     *   par la propriété recipient existe, devra :
-     * 
-     * - Déterminer le nom de l'expéditeur à partir du socket
-     * - Envoyer au destinataire un événement de type <private avec comme paramètre un *      objet ayant pour propriétés sender et text
-     * - Envoyer le même événement à l'expéditeur
-     */
-    socket.on(">private", ({recipient, text}) => {
-      if (!isAvailable(recipient)) {
-        const sender = getNicknameBy(socket);
-        socket.emit("<private", { sender, text });
-        registeredSockets[recipient].emit("<private", { sender, text });
-      }
-    })
+  /**
+   * Écouteur d'évènement >image pour l'objet socket afin de :
+   * - Envoyer un événement de type >image à tous les clients connectés
+   */
+  socket.on(">image", (content) => {
+    let text = getNicknameBy(socket);
+    socketServer.emit("<image", { text, content });
+  });
 });
