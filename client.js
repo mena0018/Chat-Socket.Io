@@ -130,7 +130,7 @@ socketClient.on("<users", (content) => {
               <span class="input-group-addon hide-sm">${user} </span>
               <input name="message-private" type="text" class="form-input" placeholder="type your message here">
               <label>
-                <input name="picture" class="icon icon-2x icon-photo picture" type="file" accept="image/jpeg image/png image/gif">
+                <input name="picture-prv" class="icon icon-2x icon-photo picture" type="file" accept="image/jpeg image/png image/gif">
               </label>
               <input type="submit" class="btn btn-error" value="send">
             </div>
@@ -216,11 +216,41 @@ socketClient.on("<image", (content) => {
     second: "2-digit",
     hour12: true,
   };
-  console.log();
   const date = new Date().toLocaleDateString("fr-FR", options);
   display.innerHTML += `
       <div>
         <span class="pseudo">${content.pseudo}</span>
+        <span class="date">${date}</span>
+      </div>
+      <img src="${content.content}" class="contenu img-responsive"></img>
+    `;
+});
+
+// PRIVATE
+let inputFilePrv = document.querySelector("input[name='picture-prv']");
+inputFilePrv.addEventListener("change", function (event) {
+  const reader = new FileReader();
+  reader.onload = function () {
+    const dataURL = reader.result;
+    socketClient.emit(">image", dataURL);
+  };
+  reader.readAsDataURL(event.target.files[0]);
+});
+
+socketClient.on("<image", (content) => {
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  };
+  const date = new Date().toLocaleDateString("fr-FR", options);
+  display.innerHTML += `
+      <div>
+        <span class="pseudo-prv">${content.pseudo}</span>
         <span class="date">${date}</span>
       </div>
       <img src="${content.content}" class="contenu img-responsive"></img>
